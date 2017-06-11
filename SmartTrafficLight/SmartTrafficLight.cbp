@@ -63,21 +63,44 @@
 		</Unit>
 		<Unit filename="../lib/timestep.h" />
 		<Unit filename="Makefile" />
+		<Unit filename="config.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="config.h" />
+		<Unit filename="configfile.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="configfile.h" />
+		<Unit filename="eventpublisher.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="eventpublisher.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="msgqueue.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="msgqueue.h" />
 		<Unit filename="project.h" />
 		<Unit filename="robotapp.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="robotapp.h" />
+		<Unit filename="robotapp.h">
+			<Option compile="1" />
+			<Option link="1" />
+		</Unit>
+		<Unit filename="serversocket.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="serversocket.h" />
 		<Extensions>
 			<code_completion>
-				<search_path add="/home/lubuntu/minimod/Libs" />
-				<search_path add="/home/lubuntu/rpi/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/usr/include" />
+				<search_path add="/home/robotdev/minimod/Libs" />
+				<search_path add="/home/robotdev/rpi/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/sysroot/usr/include" />
 			</code_completion>
 			<debugger>
-				<search_path add="/home/lubuntu/robotica/SmartTrafficLight/" />
+				<search_path add="/home/robotdev/SmartCity/SmartTrafficLight/" />
 				<remote_debugging>
 					<options conn_type="0" serial_baud="115200" ip_address="robot1" ip_port="5000" />
 				</remote_debugging>
@@ -85,6 +108,7 @@
 					<options conn_type="0" serial_baud="115200" ip_address="robot1" ip_port="5000" />
 				</remote_debugging>
 			</debugger>
+			<envvars />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
