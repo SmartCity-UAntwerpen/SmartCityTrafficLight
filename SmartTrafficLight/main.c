@@ -1,5 +1,11 @@
-#include "lin-delay.h"
-#include "lin-gpio.h"
+#include "../../minimod/Libs/lin-delay.h"
+#include "../../minimod/Libs/lin-gpio.h"
+#include "../../minimod/Libs/lego-motor.h"
+#include "../../minimod/Libs/lego-sensor.h"
+#include "../../minimod/Libs/rf-cc1101.h"
+#include "../../minimod/Libs/datatypes.h"
+#include "imu.h"
+#include "pwr-liion1a.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>
