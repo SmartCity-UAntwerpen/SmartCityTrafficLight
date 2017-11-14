@@ -1,7 +1,7 @@
-SmartCityTrafficLight
+TrafficLightDriver
 =====================
 
-The SmartCity TrafficLight is the low-level driver program developed in C which runs on the SmartTrafficLights in
+The Traffic Light Driver is the low-level driver program developed in C which runs on the SmartTrafficLights in
 the SmartCity. This driver module is a part of the SmartCity Project. The SmartTrafficLight is an embedded traffic
 light sign designed and build by Professor Paillet Eric of the University of Antwerp. The SmartTrafficLight is an
 3D-printed traffic light sign with two lights: Red and Green. The traffic lights are controlled with a Raspberri Pi
