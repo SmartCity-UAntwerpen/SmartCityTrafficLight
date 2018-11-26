@@ -178,10 +178,10 @@ int run()
 
     while(!abort_)
     {
-        //const char* response = "TEST";
+        const char* response = "Testing....";
         //writeLine(TCP_EventSocket.connections, response, strlen(response));
         //Program loop
-        /*pfio_digital_write(LIGHT1, RED);
+        pfio_digital_write(LIGHT1, RED);
         pfio_digital_write(LIGHT2, RED);
         _delay_ms(SWITCH_TIME);
         pfio_digital_write(LIGHT1, RED);
@@ -193,7 +193,7 @@ int run()
         pfio_digital_write(LIGHT1, GREEN);
         pfio_digital_write(LIGHT2, RED);
         _delay_ms(CYCLE_TIME);
-        _delay_ms(200);*/
+        _delay_ms(200);
 
     }
 
