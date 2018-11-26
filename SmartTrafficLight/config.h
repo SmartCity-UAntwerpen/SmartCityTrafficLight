@@ -19,7 +19,7 @@ typedef struct config_t
 
 typedef enum ConfigKey
 {
-    CONFIG_CARNAME,
+    CONFIG_TRAFFICLIGHTNAME,
     CONFIG_LISTENINGPORT,
     CONFIG_PUBLISHPORT,
     CONFIG_SERVERURL,

@@ -6,7 +6,7 @@ int initConfiguration(void)
 {
     //Initialise default configuration
     //Config Carname
-    if(_initConfigPair(CONFIG_CARNAME, "carname", "TrafficLight") > 0)
+    if(_initConfigPair(CONFIG_TRAFFICLIGHTNAME, "trafficLightName", "TrafficLight") > 0)
     {
         printf("Could not allocate memory for configuration!\n");
 
@@ -36,15 +36,6 @@ int initConfiguration(void)
 
         return 1;
     }
-
-    //Config Activate Lift
-    if(_initConfigPair(CONFIG_LIFTACTIVE, "liftenable", "on") > 0)
-    {
-        printf("Could not allocate memory for configuration!\n");
-
-        return 1;
-    }
-
     return 0;
 }
 

@@ -49,7 +49,7 @@ int initialiseSocket(socket_t* socket_p, int port, socket_mode mode)
 
     if(socket_p->serverSocket < 0)
     {
-        printf("Error while initialising socket on port: %d\n", port);
+        printf("Error while initiliasing socket on port: %d\n", port);
 
         close(socket_p->serverSocket);
 
@@ -78,7 +78,7 @@ int initialiseSocket(socket_t* socket_p, int port, socket_mode mode)
 	socket_p->mode = mode;
 	socket_p->listening = false;
 	socket_p->handleConnectionCallback = NULL;
-	//socket_p->connections = NULL; //Temporarily implmementation (ONLY one connection allowed)
+	//socket_p->connections = NULL; //Temporarily implementation (ONLY one connection allowed)
     socket_p->connections = 0;
 
 	return 0;
@@ -240,6 +240,7 @@ void* listeningUDPThread(void* args)
 
 		if(dataLength >= 0)
 		{
+		    //handle the task
 			((socket_t*)args)->packetReceivedCallback(buffer, NULL, 0);
 		}
 		else
@@ -316,15 +317,15 @@ void* handleTaskTCPConnection(void* args)
 
     socket_t* serverSocket = (socket_t*) args;
     int socketConnection = serverSocket->connections;
-    char* carName = getConfigValue(CONFIG_CARNAME);
+    char* trafficLightName = getConfigValue(CONFIG_TRAFFICLIGHTNAME);
 
     //Send greeting message
-    strcpy(response, "SmartCity Car: ");
-    strcat(response, carName);
+    strcpy(response, "Smartcity Light: ");
+    strcat(response, trafficLightName);
     strcat(response, " - Version: ");
-    strcat(response, APP_VERSION);
+    strcat(response, APP_VERSION); // kijk na vanwaar dit komt
     strcat(response, "\r\n# ");
-    response[31 + strlen(carName) + strlen(APP_VERSION)] = '\0';
+    response[31 + strlen(trafficLightName) + strlen(APP_VERSION)] = '\0';
 
 	writeLine(socketConnection, response, strlen(response));
 
@@ -379,15 +380,15 @@ void* handleEventTCPConnection(void* args)
 
     socket_t* serverSocket = (socket_t*) args;
     int socketConnection = serverSocket->connections;
-    char* carName = getConfigValue(CONFIG_CARNAME);
+    char* trafficLightName = getConfigValue(CONFIG_TRAFFICLIGHTNAME);
 
     //Send greeting message
-    strcpy(response, "SmartCity Car: ");
-    strcat(response, carName);
+    strcpy(response, "Smartcity light: ");
+    strcat(response, trafficLightName);
     strcat(response, " - Version: ");
     strcat(response, APP_VERSION);
     strcat(response, "\r\n");
-    response[29 + strlen(carName) + strlen(APP_VERSION)] = '\0';
+    response[29 + strlen(trafficLightName) + strlen(APP_VERSION)] = '\0';
 
     startEventPublisher();
 
@@ -464,7 +465,6 @@ void* handleEventTCPConnection(void* args)
 
 	return NULL;
 }
-
 int getSocketPort(socket_t* socket_p)
 {
     return socket_p->listeningPort;

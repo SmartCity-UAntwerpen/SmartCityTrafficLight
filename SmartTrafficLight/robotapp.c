@@ -12,14 +12,14 @@ socket_t TCP_EventSocket;
 bool running;
 bool abort_;
 
-int initialiseCore(int argc, char *argv[]);
+int initialiseDriver(int argc, char *argv[]);
 size_t receivedCommand(char* command, char* response, size_t maxLength);
 size_t processCommand(char* command, char* response, size_t maxLength);
 size_t processLightCommand(char* command, char* response, size_t maxLength);
 int run();
 void stop();
-int startProcesses();
-int stopProcesses();
+int startSockets();
+int stopSockets();
 bool isRunning();
 
 
@@ -30,14 +30,14 @@ void RobotApp(int argc, char *argv[])
     running = false;
     abort_ = false;
 
-    if(initialiseCore(argc, argv) != 0)
+    if(initialiseDriver(argc, argv) != 0)
     {
-        printf("Core initialisation failed!\n");
+        printf("Driver initialisation failed!\n");
         printf("System will shutdown...\n");
         return;
     }
 
-    printf("Core ready...\n");
+    printf("Driver ready...\n");
 
     run();
 
@@ -52,7 +52,7 @@ void RobotApp(int argc, char *argv[])
     deinitConfiguration();
 }
 
-int initialiseCore(int argc, char *argv[])
+int initialiseDriver(int argc, char *argv[])
 {
     int res;
 
@@ -93,48 +93,7 @@ int initialiseCore(int argc, char *argv[])
         //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_GREEN);
         printf("OK\n");
     }
-
-    //Initialise drivequeue
-    //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_WHITE);
-    //printf("Init drivequeue...");
-    //res = initDriveQueue();
-    /*if(res > 0)
-    {
-        //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_RED);
-        printf("FAIL: initDriveQueue() error code %d\n", res);
-
-        //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_WHITE);
-        return 3;
-    }
-    else
-    {
-        //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_GREEN);
-        printf("OK\n");
-    }*/
-
-    //Set event callback
-    //setDriveFinishedCallback(driveFinishedEvent);
-
-    //Setup motordrivers
-    //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_WHITE);
-    /*printf("Init motordrivers...");
-    res = DriveInit();
-    if(res > 0)
-    {
-        //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_RED);
-        printf("FAIL: DriveInit() error code %d\n", res);
-
-        //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_WHITE);
-    //      return 4;
-    }
-    else
-    {
-        //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_GREEN);
-        printf("OK\n");
-    }*/
-
     //Initialise event publisher
-    //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_WHITE);
     printf("Init event publisher...");
     res = initEventPublisher();
     if(res > 0)
@@ -150,43 +109,6 @@ int initialiseCore(int argc, char *argv[])
         //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_GREEN);
         printf("OK\n");
     }
-
-    //Initialise process modules
-    //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_WHITE);
-    /*printf("Init process modules...");
-    res = initProcessModules();
-    if(res > 1)
-    {
-        //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_RED);
-        printf("FAIL: initProcessModules() error code %d\n", res);
-
-        //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_WHITE);
-        return 6;
-    }
-    else
-    {
-        //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_GREEN);
-        printf("OK\n");
-    }*/
-
-    //Intialise restinterface
-    //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_WHITE);
-    /*printf("Init REST-controller...");
-    res = initRestInterface();
-    if(res > 1)
-    {
-        //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_RED);
-        printf("FAIL: initRestInterface() error code %d\n", res);
-
-        //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_WHITE);
-        return 7;
-    }
-    else
-    {
-        //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_GREEN);
-        printf("OK\n");
-    }*/
-
     //Initialise serversockets
     //Task serversocket
     //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_WHITE);
@@ -203,7 +125,7 @@ int initialiseCore(int argc, char *argv[])
     else
     {
         //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_GREEN);
-        printf("OK\n");
+        printf("task socket initialised!\n");
     }
 
     //Set message received callback
@@ -225,75 +147,13 @@ int initialiseCore(int argc, char *argv[])
     else
     {
         //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_GREEN);
-        printf("OK\n");
+        printf("event socket initialised\n");
     }
 
     //Set message received callback
     setPacketReceivedCallback(&TCP_EventSocket, receivedCommand);
     setConnectionHandleCallback(&TCP_EventSocket, handleEventTCPConnection);
 
-    /*
-    //Initialise camera
-    AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_WHITE);
-    printf("Init camera...");
-    res = initCamera();
-    if(initCamera() > 1)
-    {
-        AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_RED);
-        printf("FAIL: initCamera() error code %d\n", res);
-
-        AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_WHITE);
-    //      return 10;
-    }
-    else
-    {
-        AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_GREEN);
-        printf("OK\n");
-    }
-
-    //Initialise map
-    AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_WHITE);
-    printf("Read mapfile...");
-    res = parseMapFile("MAP.dmap");
-    if(res > 0)
-    {
-        AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_YELLOW);
-        printf("WARNING: could not load map file. parseMapFile() error code %d\n", res);
-    }
-    else
-    {
-        AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_GREEN);
-        printf("OK\n");
-    }
-
-    //Initialise lift motor
-    char* liftActive = getConfigValue(CONFIG_LIFTACTIVE);
-
-    AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_WHITE);
-    printf("Initialise lift...");
-
-    if(strncmp(liftActive, "on", 2) == 0)
-    {
-        res = LiftInit();
-        if(res > 0)
-        {
-            AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_YELLOW);
-            printf("WARNING: could not initialise lift. LiftInit() error code %d\n", res);
-        }
-        else
-        {
-            AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_GREEN);
-            printf("OK\n");
-        }
-    }
-    else
-    {
-        AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_CYAN);
-        printf("DISABLED IN CONFIG\n");
-    }
-
-    AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_WHITE);
-    */
     return 0;
 }
 
@@ -304,12 +164,11 @@ int run()
 
     running = true;
 
-    status = startProcesses();
+    status = startSockets();
 
     if(status > 0)
     {
-        printf("Core failed to start system! Error code: %d\n", status);
-
+        printf("Driver failed to start system! Error code: %d\n", status);
         //System failed to start processes
         running = false;
         abort_ = false;
@@ -319,8 +178,8 @@ int run()
 
     while(!abort_)
     {
-        const char* response = "TEST";
-        writeLine(TCP_EventSocket.connections, response, strlen(response));
+        //const char* response = "TEST";
+        //writeLine(TCP_EventSocket.connections, response, strlen(response));
         //Program loop
         /*pfio_digital_write(LIGHT1, RED);
         pfio_digital_write(LIGHT2, RED);
@@ -338,12 +197,12 @@ int run()
 
     }
 
-    status = stopProcesses();
+    status = stopSockets();
 
     running = false;
     abort_ = false;
 
-    return -status;
+    return status;
 }
 
 void stop()
@@ -354,17 +213,8 @@ void stop()
     }
 }
 
-int startProcesses()
+int startSockets()
 {
-    /*if(startQueue(getDriveQueue()) > 0)
-    {
-        //Could not start drive queue
-        return 1;
-    }*/
-
-    //Start watchdog
-    //startWatchdog();
-
     //Start server sockets
     startListening(&TCP_TaskSocket);
     startListening(&TCP_EventSocket);
@@ -372,25 +222,8 @@ int startProcesses()
     return 0;
 }
 
-int stopProcesses()
+int stopSockets()
 {
-    //Stop drive queue
-    /*if(getDriveQueue() != NULL)
-    {
-        stopQueue(getDriveQueue());
-
-        deinitDriveQueue();
-    }*/
-
-    //Stop watchdog
-    //stopWatchdog();
-
-    //Stop driving
-    //AbortDriving();
-
-    //Stop process modules
-    //stopProcessModules();
-
     //Stop server sockets
     stopListening(&TCP_TaskSocket);
     stopListening(&TCP_EventSocket);
@@ -405,9 +238,7 @@ bool isRunning()
 
 size_t receivedCommand(char* command, char* response, size_t maxLength)
 {
-    //SmartCore* core = SmartCore::getInstance();
-
-    return processCommand(command, response, maxLength);//core->processCommand(command, response, maxLength);
+    return processCommand(command, response, maxLength);
 }
 
 size_t processCommand(char* command, char* response, size_t maxLength)
@@ -428,7 +259,7 @@ size_t processCommand(char* command, char* response, size_t maxLength)
     else if(strcmp(command, "HELP") == 0 || strcmp(command, "?") == 0)
     {
         //Help command
-        functionResponse = "KNOWN COMMANDS: LIGHT 1/2 RED/GREEN, HELP, SHUTDOWN";
+        functionResponse = "KNOWN COMMANDS: LIGHT <1/2> <RED/GREEN>, HELP, SHUTDOWN";
     }
     else
     {
