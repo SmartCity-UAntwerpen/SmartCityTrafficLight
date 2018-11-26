@@ -93,22 +93,6 @@ int initialiseDriver(int argc, char *argv[])
         //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_GREEN);
         printf("OK\n");
     }
-    //Initialise event publisher
-    printf("Init event publisher...");
-    res = initEventPublisher();
-    if(res > 0)
-    {
-        //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_RED);
-        printf("FAIL: initEventPublisher() error code %d\n", res);
-
-        //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_WHITE);
-        return 5;
-    }
-    else
-    {
-        //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_GREEN);
-        printf("OK\n");
-    }
     //Initialise serversockets
     //Task serversocket
     //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_WHITE);

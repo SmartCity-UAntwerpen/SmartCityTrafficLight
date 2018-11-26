@@ -2,7 +2,6 @@
 #define ROBOT_APP
 
 #include "project.h"
-#include "../../minimod/Libs/lego-sensor.h"
 #include "lin-delay.h"
 #include "TimeSupport.h"
 #include "config.h"

@@ -1,5 +1,4 @@
 #include "serversocket.h"
-#include "eventpublisher.c"
 #define DEBUG_SOCKET
 
 int initialiseSocket(socket_t* socket_p, int port, socket_mode mode)
@@ -390,16 +389,12 @@ void* handleEventTCPConnection(void* args)
     strcat(response, "\r\n");
     response[29 + strlen(trafficLightName) + strlen(APP_VERSION)] = '\0';
 
-    startEventPublisher();
-
 	writeLine(socketConnection, response, strlen(response));
 
     while(serverSocket->listening)
     {
-        if(eventAvailable())
-        {
             //Get event string
-            eventString = getNextEventString();
+            eventString = "todo";
 
             if(eventString != NULL)
             {
@@ -415,8 +410,6 @@ void* handleEventTCPConnection(void* args)
 
                 if(writeStatus == 0)
                 {
-                    //Connection closed
-                    stopEventPublisher();
 
                     return NULL;
                 }
@@ -426,12 +419,8 @@ void* handleEventTCPConnection(void* args)
                     #ifdef DEBUG_SOCKET
                     printf("Error writing line to socket on port: %d (TCP)\n", serverSocket->listeningPort);
                     #endif
-
-                    stopEventPublisher();
-
                     return NULL;
                 }
-            }
         }
         else
         {
@@ -444,8 +433,6 @@ void* handleEventTCPConnection(void* args)
             if(readStatus == 0)
             {
                 //Connection closed
-                stopEventPublisher();
-
                 return NULL;
             }
             else if(readStatus < -1)
@@ -453,7 +440,6 @@ void* handleEventTCPConnection(void* args)
                 //Error occured while reading socket
                 if(errno != EINTR)
                 {
-                    stopEventPublisher();
 
                     return NULL;
                 }
@@ -461,7 +447,6 @@ void* handleEventTCPConnection(void* args)
         }
     }
 
-    stopEventPublisher();
 
 	return NULL;
 }
