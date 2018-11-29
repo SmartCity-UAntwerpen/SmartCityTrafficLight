@@ -242,17 +242,21 @@ size_t processLightCommand(char* command, char* response, size_t maxLength)
         _delay_ms(1000);
 
     }
-    else if(strcmp(command, "LIGHT 1 OFF"))
+    else if(strcmp(command, "LIGHT 1 OFF") == 0)
     {
         pfio_digital_write(LIGHT1RED, OFF);
         pfio_digital_write(LIGHT1GREEN, OFF);
         functionResponse = "ACK";
+        _delay_ms(1000);
+
     }
-    else if(strcmp(command, "LIGHT 2 OFF"))
+    else if(strcmp(command, "LIGHT 2 OFF") == 0)
     {
         pfio_digital_write(LIGHT2RED, OFF);
         pfio_digital_write(LIGHT2GREEN, OFF);
         functionResponse = "ACK";
+        _delay_ms(1000);
+
     }
     else
     {
