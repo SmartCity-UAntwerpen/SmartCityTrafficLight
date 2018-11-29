@@ -12,9 +12,9 @@
 
 #define LISTENINGPORT 1315
 #define LIGHT1GREEN 0
-#define LIGHT2GREEN 0
+#define LIGHT2GREEN 2
 #define LIGHT1RED 1
-#define LIGHT2RED 1
+#define LIGHT2RED 3
 #define ON 1
 #define OFF 0
 

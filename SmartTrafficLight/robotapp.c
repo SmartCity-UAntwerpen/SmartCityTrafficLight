@@ -5,7 +5,6 @@
 
 
 socket_t TCP_TaskSocket;
-socket_t TCP_EventSocket;
 
 bool running;
 bool abort_;
@@ -15,7 +14,6 @@ size_t receivedCommand(char* command, char* response, size_t maxLength);
 size_t processCommand(char* command, char* response, size_t maxLength);
 size_t processLightCommand(char* command, char* response, size_t maxLength);
 int run();
-void stop();
 void stop();
 int startSockets();
 int stopSockets();
