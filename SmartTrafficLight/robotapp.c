@@ -104,8 +104,6 @@ int run()
 
     while(!abort_)
     {
-        const char* response = "Testing....";
-        writeLine(TCP_EventSocket.connections, response, strlen(response));
         /*//Program loop
         pfio_digital_write(LIGHT1RED, OFF);
         pfio_digital_write(LIGHT1GREEN, ON);
