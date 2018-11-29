@@ -163,21 +163,18 @@ int run()
     while(!abort_)
     {
         const char* response = "Testing....";
-        //writeLine(TCP_EventSocket.connections, response, strlen(response));
-        //Program loop
-        pfio_digital_write(LIGHT1, RED);
-        pfio_digital_write(LIGHT2, RED);
+        writeLine(TCP_EventSocket.connections, response, strlen(response));
+        /*//Program loop
+        pfio_digital_write(LIGHT1RED, OFF);
+        pfio_digital_write(LIGHT1GREEN, ON);
+        //pfio_digital_write(LIGHT2, RED);
         _delay_ms(SWITCH_TIME);
-        pfio_digital_write(LIGHT1, RED);
-        pfio_digital_write(LIGHT2, GREEN);
-        _delay_ms(CYCLE_TIME);
-        pfio_digital_write(LIGHT1, RED);
-        pfio_digital_write(LIGHT2, RED);
-        _delay_ms(SWITCH_TIME);
-        pfio_digital_write(LIGHT1, GREEN);
-        pfio_digital_write(LIGHT2, RED);
+        pfio_digital_write(LIGHT1GREEN, OFF);
+        pfio_digital_write(LIGHT1RED, ON);
+
         _delay_ms(CYCLE_TIME);
         _delay_ms(200);
+        */
 
     }
 
@@ -277,14 +274,16 @@ size_t processLightCommand(char* command, char* response, size_t maxLength)
 
     if(strcmp(command, "LIGHT 1 RED") == 0)
     {
-        pfio_digital_write(LIGHT1, RED);
+        pfio_digital_write(LIGHT1RED, ON);
+        pfio_digital_write(LIGHT1GREEN, OFF);
         functionResponse = "ACK";
         _delay_ms(1000);
 
     }
     else if(strcmp(command, "LIGHT 2 RED") == 0)
     {
-        pfio_digital_write(LIGHT2, RED);
+        pfio_digital_write(LIGHT2RED, ON);
+        pfio_digital_write(LIGHT2GREEN, OFF);
         functionResponse = "ACK";
         _delay_ms(1000);
 
@@ -292,14 +291,16 @@ size_t processLightCommand(char* command, char* response, size_t maxLength)
     else if(strcmp(command, "LIGHT 1 GREEN") == 0)
     {
 
-        pfio_digital_write(LIGHT1, GREEN);
+        pfio_digital_write(LIGHT1GREEN, ON);
+        pfio_digital_write(LIGHT1RED, OFF);
         functionResponse = "ACK";
         _delay_ms(1000);
 
     }
     else if(strcmp(command, "LIGHT 2 GREEN") == 0)
     {
-        pfio_digital_write(LIGHT2, GREEN);
+        pfio_digital_write(LIGHT2GREEN, ON);
+        pfio_digital_write(LIGHT2RED, OFF);
         functionResponse = "ACK";
         _delay_ms(1000);
 

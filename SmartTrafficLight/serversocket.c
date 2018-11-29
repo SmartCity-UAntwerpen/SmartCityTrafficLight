@@ -316,7 +316,8 @@ void* handleTaskTCPConnection(void* args)
 
     socket_t* serverSocket = (socket_t*) args;
     int socketConnection = serverSocket->connections;
-    char* trafficLightName = getConfigValue(CONFIG_TRAFFICLIGHTNAME);
+    //char* trafficLightName = getConfigValue(CONFIG_TRAFFICLIGHTNAME);
+    char* trafficLightName = "TESTLIGHTTTuu";
 
     //Send greeting message
     strcpy(response, "Smartcity Light: ");
@@ -379,7 +380,8 @@ void* handleEventTCPConnection(void* args)
 
     socket_t* serverSocket = (socket_t*) args;
     int socketConnection = serverSocket->connections;
-    char* trafficLightName = getConfigValue(CONFIG_TRAFFICLIGHTNAME);
+    //char* trafficLightName = getConfigValue(CONFIG_TRAFFICLIGHTNAME);
+    char* trafficLightName = "TESTLIGHT";
 
     //Send greeting message
     strcpy(response, "Smartcity light: ");
