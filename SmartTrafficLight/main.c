@@ -1,6 +1,3 @@
-#include "../../minimod/Libs/lin-delay.h"
-#include "../../minimod/Libs/lin-gpio.h"
-#include "../../minimod/Libs/datatypes.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>

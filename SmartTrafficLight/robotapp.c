@@ -1,7 +1,5 @@
 #include "robotapp.h"
 #include "stddef.h"
-#include "config.c"
-#include "configfile.c"
 #include "serversocket.c"
 #include <libpiface-1.0/pfio.h>
 
@@ -17,6 +15,7 @@ size_t receivedCommand(char* command, char* response, size_t maxLength);
 size_t processCommand(char* command, char* response, size_t maxLength);
 size_t processLightCommand(char* command, char* response, size_t maxLength);
 int run();
+void stop();
 void stop();
 int startSockets();
 int stopSockets();
@@ -46,10 +45,6 @@ void RobotApp(int argc, char *argv[])
 
         //Release server sockets
     releaseSocket(&TCP_TaskSocket);
-    releaseSocket(&TCP_EventSocket);
-
-    //Destroy configuration
-    deinitConfiguration();
 }
 
 int initialiseDriver(int argc, char *argv[])
@@ -57,47 +52,17 @@ int initialiseDriver(int argc, char *argv[])
     int res;
 
     //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_GREEN);
-    printf("Initialising SmartCore...\n");
+    printf("Initiliasing TrafficLightDriver..\n");
 
     //Initialise configuration
     //Load default configuration
     //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_WHITE);
-    printf("Load configuration...");
-    res = initConfiguration();
-    if(res > 0)
-    {
-        //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_RED);
-        printf("FAIL: initConfiguration() error code %d\n", res);
 
-        //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_WHITE);
-        return 1;
-    }
-
-    //Read configuration if available
-    res = readConfigFile("sc-conf");
-    if(res > 1)
-    {
-        //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_RED);
-        printf("FAIL: loadConfigFile() error code %d\n", res);
-
-        //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_WHITE);
-        return 2;
-    }
-    else if(res == 1)
-    {
-        //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_YELLOW);
-        printf("WARNING: no configuration file found. loadConfigFile() error code %d\n", res);
-    }
-    else
-    {
-        //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_GREEN);
-        printf("OK\n");
-    }
     //Initialise serversockets
     //Task serversocket
     //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_WHITE);
     printf("Init task serversocket...");
-    res = initialiseSocket(&TCP_TaskSocket, atoi(getConfigValue(CONFIG_LISTENINGPORT)), SOCKET_TCP);
+    res = initialiseSocket(&TCP_TaskSocket, LISTENINGPORT, SOCKET_TCP);
     if(res > 1)
     {
         //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_RED);
@@ -116,27 +81,6 @@ int initialiseDriver(int argc, char *argv[])
     setPacketReceivedCallback(&TCP_TaskSocket, receivedCommand);
     setConnectionHandleCallback(&TCP_TaskSocket, handleTaskTCPConnection);
 
-    //Event serversocket
-    //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_WHITE);
-    printf("Init event serversocket...");
-    res = initialiseSocket(&TCP_EventSocket, atoi(getConfigValue(CONFIG_PUBLISHPORT)), SOCKET_TCP);
-    if(res > 1)
-    {
-        //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_RED);
-        printf("FAIL: initialiseSocket() error code %d\n", res);
-
-        //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_WHITE);
-        return 9;
-    }
-    else
-    {
-        //AnsiSetColor(ANSI_ATTR_OFF,ANSI_BLACK,ANSI_GREEN);
-        printf("event socket initialised\n");
-    }
-
-    //Set message received callback
-    setPacketReceivedCallback(&TCP_EventSocket, receivedCommand);
-    setConnectionHandleCallback(&TCP_EventSocket, handleEventTCPConnection);
 
     return 0;
 }
@@ -198,8 +142,6 @@ int startSockets()
 {
     //Start server sockets
     startListening(&TCP_TaskSocket);
-    startListening(&TCP_EventSocket);
-
     return 0;
 }
 
@@ -207,7 +149,6 @@ int stopSockets()
 {
     //Stop server sockets
     stopListening(&TCP_TaskSocket);
-    stopListening(&TCP_EventSocket);
 
     return 0;
 }
@@ -240,7 +181,7 @@ size_t processCommand(char* command, char* response, size_t maxLength)
     else if(strcmp(command, "HELP") == 0 || strcmp(command, "?") == 0)
     {
         //Help command
-        functionResponse = "KNOWN COMMANDS: LIGHT <1/2> <RED/GREEN>, HELP, SHUTDOWN";
+        functionResponse = "KNOWN COMMANDS: LIGHT <1/2> <RED/GREEN/OFF>, HELP, SHUTDOWN";
     }
     else
     {
@@ -304,6 +245,18 @@ size_t processLightCommand(char* command, char* response, size_t maxLength)
         functionResponse = "ACK";
         _delay_ms(1000);
 
+    }
+    else if(strcmp(command, "LIGHT 1 OFF"))
+    {
+        pfio_digital_write(LIGHT1RED, OFF);
+        pfio_digital_write(LIGHT1GREEN, OFF);
+        functionResponse = "ACK";
+    }
+    else if(strcmp(command, "LIGHT 2 OFF"))
+    {
+        pfio_digital_write(LIGHT2RED, OFF);
+        pfio_digital_write(LIGHT2GREEN, OFF);
+        functionResponse = "ACK";
     }
     else
     {

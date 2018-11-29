@@ -306,7 +306,6 @@ void* listeningTCPThread(void* args)
 
     return NULL;
 }
-
 void* handleTaskTCPConnection(void* args)
 {
     int readStatus;
@@ -316,16 +315,9 @@ void* handleTaskTCPConnection(void* args)
 
     socket_t* serverSocket = (socket_t*) args;
     int socketConnection = serverSocket->connections;
-    //char* trafficLightName = getConfigValue(CONFIG_TRAFFICLIGHTNAME);
-    char* trafficLightName = "TESTLIGHTTTuu";
 
     //Send greeting message
-    strcpy(response, "Smartcity Light: ");
-    strcat(response, trafficLightName);
-    strcat(response, " - Version: ");
-    strcat(response, APP_VERSION); // kijk na vanwaar dit komt
-    strcat(response, "\r\n# ");
-    response[31 + strlen(trafficLightName) + strlen(APP_VERSION)] = '\0';
+    strcpy(response, "TrafficLightDriver - Version: 0.0.4 \r\n#\0");
 
 	writeLine(socketConnection, response, strlen(response));
 
@@ -369,89 +361,7 @@ void* handleTaskTCPConnection(void* args)
 	return NULL;
 }
 
-void* handleEventTCPConnection(void* args)
-{
-    int writeStatus;
-    int readStatus;
-    char readBuffer;
-    char response[RESPONSE_SIZE] = "\0";
-	char buffer[MESSAGE_SIZE] = "\0";
-	char* eventString = NULL;
 
-    socket_t* serverSocket = (socket_t*) args;
-    int socketConnection = serverSocket->connections;
-    //char* trafficLightName = getConfigValue(CONFIG_TRAFFICLIGHTNAME);
-    char* trafficLightName = "TESTLIGHT";
-
-    //Send greeting message
-    strcpy(response, "Smartcity light: ");
-    strcat(response, trafficLightName);
-    strcat(response, " - Version: ");
-    strcat(response, APP_VERSION);
-    strcat(response, "\r\n");
-    response[29 + strlen(trafficLightName) + strlen(APP_VERSION)] = '\0';
-
-	writeLine(socketConnection, response, strlen(response));
-
-    while(serverSocket->listening)
-    {
-            //Get event string
-            eventString = "todo";
-
-            if(eventString != NULL)
-            {
-                //Send message restricted by message size
-                memcpy(buffer, eventString, MESSAGE_SIZE - 1);
-                buffer[MESSAGE_SIZE - 1] = '\0';
-
-                writeStatus = writeLine(socketConnection, buffer, strlen(buffer));
-
-                //Free event string
-                free(eventString);
-                eventString = NULL;
-
-                if(writeStatus == 0)
-                {
-
-                    return NULL;
-                }
-                else if(writeStatus < 0)
-                {
-                    //Error occured while writing to socket
-                    #ifdef DEBUG_SOCKET
-                    printf("Error writing line to socket on port: %d (TCP)\n", serverSocket->listeningPort);
-                    #endif
-                    return NULL;
-                }
-        }
-        else
-        {
-            //No event to publish
-            _delay_ms(100);
-
-            //Check if connection is still open
-            readStatus = read(socketConnection, &readBuffer, 1);
-
-            if(readStatus == 0)
-            {
-                //Connection closed
-                return NULL;
-            }
-            else if(readStatus < -1)
-            {
-                //Error occured while reading socket
-                if(errno != EINTR)
-                {
-
-                    return NULL;
-                }
-            }
-        }
-    }
-
-
-	return NULL;
-}
 int getSocketPort(socket_t* socket_p)
 {
     return socket_p->listeningPort;
