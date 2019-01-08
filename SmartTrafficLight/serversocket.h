@@ -12,7 +12,6 @@
 #include <pthread.h>
 #include <stdbool.h>
 #include <errno.h>
-#include "project.h"
 
 #ifdef __cplusplus	//Check if the compiler is C++
 	extern "C"	//Code needs to be handled as C-style code
@@ -85,8 +84,6 @@ void* listeningUDPThread(void* args);
 void* listeningTCPThread(void* args);
 
 void* handleTaskTCPConnection(void* args);
-
-void* handleEventTCPConnection(void* args);
 
 int getSocketPort(socket_t* socket_p);
 

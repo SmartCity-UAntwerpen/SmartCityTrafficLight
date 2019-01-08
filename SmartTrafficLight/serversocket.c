@@ -1,5 +1,4 @@
 #include "serversocket.h"
-#include "eventpublisher.c"
 #define DEBUG_SOCKET
 
 int initialiseSocket(socket_t* socket_p, int port, socket_mode mode)
@@ -49,7 +48,7 @@ int initialiseSocket(socket_t* socket_p, int port, socket_mode mode)
 
     if(socket_p->serverSocket < 0)
     {
-        printf("Error while initialising socket on port: %d\n", port);
+        printf("Error while initiliasing socket on port: %d\n", port);
 
         close(socket_p->serverSocket);
 
@@ -78,7 +77,7 @@ int initialiseSocket(socket_t* socket_p, int port, socket_mode mode)
 	socket_p->mode = mode;
 	socket_p->listening = false;
 	socket_p->handleConnectionCallback = NULL;
-	//socket_p->connections = NULL; //Temporarily implmementation (ONLY one connection allowed)
+	//socket_p->connections = NULL; //Temporarily implementation (ONLY one connection allowed)
     socket_p->connections = 0;
 
 	return 0;
@@ -240,6 +239,7 @@ void* listeningUDPThread(void* args)
 
 		if(dataLength >= 0)
 		{
+		    //handle the task
 			((socket_t*)args)->packetReceivedCallback(buffer, NULL, 0);
 		}
 		else
@@ -306,7 +306,6 @@ void* listeningTCPThread(void* args)
 
     return NULL;
 }
-
 void* handleTaskTCPConnection(void* args)
 {
     int readStatus;
@@ -316,15 +315,9 @@ void* handleTaskTCPConnection(void* args)
 
     socket_t* serverSocket = (socket_t*) args;
     int socketConnection = serverSocket->connections;
-    char* carName = getConfigValue(CONFIG_CARNAME);
 
     //Send greeting message
-    strcpy(response, "SmartCity Car: ");
-    strcat(response, carName);
-    strcat(response, " - Version: ");
-    strcat(response, APP_VERSION);
-    strcat(response, "\r\n# ");
-    response[31 + strlen(carName) + strlen(APP_VERSION)] = '\0';
+    strcpy(response, "TrafficLightDriver - Version: 0.0.4 \r\n#\0");
 
 	writeLine(socketConnection, response, strlen(response));
 
@@ -368,102 +361,6 @@ void* handleTaskTCPConnection(void* args)
 	return NULL;
 }
 
-void* handleEventTCPConnection(void* args)
-{
-    int writeStatus;
-    int readStatus;
-    char readBuffer;
-    char response[RESPONSE_SIZE] = "\0";
-	char buffer[MESSAGE_SIZE] = "\0";
-	char* eventString = NULL;
-
-    socket_t* serverSocket = (socket_t*) args;
-    int socketConnection = serverSocket->connections;
-    char* carName = getConfigValue(CONFIG_CARNAME);
-
-    //Send greeting message
-    strcpy(response, "SmartCity Car: ");
-    strcat(response, carName);
-    strcat(response, " - Version: ");
-    strcat(response, APP_VERSION);
-    strcat(response, "\r\n");
-    response[29 + strlen(carName) + strlen(APP_VERSION)] = '\0';
-
-    startEventPublisher();
-
-	writeLine(socketConnection, response, strlen(response));
-
-    while(serverSocket->listening)
-    {
-        if(eventAvailable())
-        {
-            //Get event string
-            eventString = getNextEventString();
-
-            if(eventString != NULL)
-            {
-                //Send message restricted by message size
-                memcpy(buffer, eventString, MESSAGE_SIZE - 1);
-                buffer[MESSAGE_SIZE - 1] = '\0';
-
-                writeStatus = writeLine(socketConnection, buffer, strlen(buffer));
-
-                //Free event string
-                free(eventString);
-                eventString = NULL;
-
-                if(writeStatus == 0)
-                {
-                    //Connection closed
-                    stopEventPublisher();
-
-                    return NULL;
-                }
-                else if(writeStatus < 0)
-                {
-                    //Error occured while writing to socket
-                    #ifdef DEBUG_SOCKET
-                    printf("Error writing line to socket on port: %d (TCP)\n", serverSocket->listeningPort);
-                    #endif
-
-                    stopEventPublisher();
-
-                    return NULL;
-                }
-            }
-        }
-        else
-        {
-            //No event to publish
-            _delay_ms(100);
-
-            //Check if connection is still open
-            readStatus = read(socketConnection, &readBuffer, 1);
-
-            if(readStatus == 0)
-            {
-                //Connection closed
-                stopEventPublisher();
-
-                return NULL;
-            }
-            else if(readStatus < -1)
-            {
-                //Error occured while reading socket
-                if(errno != EINTR)
-                {
-                    stopEventPublisher();
-
-                    return NULL;
-                }
-            }
-        }
-    }
-
-    stopEventPublisher();
-
-	return NULL;
-}
 
 int getSocketPort(socket_t* socket_p)
 {
